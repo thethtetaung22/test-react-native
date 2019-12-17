@@ -21,56 +21,48 @@ const translate = memoize(
   (key, config) => (config ? key + JSON.stringify(config) : key)
 );
 
-export const strings = (name, params = {}) => I18n.t(name, params);
-export const switchLanguage = (lang, component) => {
-  I18n.locale = lang;
+const setI18nConfig = (lang) => {
+  // fallback if no available language fits
+  const fallback = { languageTag: "en", isRTL: false };
+
+  const { languageTag, isRTL } =
+  RNLocalize.findBestAvailableLanguage(Object.keys(translationGetters)) ||
+  fallback;
+
+  // clear translation cache
   translate.cache.clear();
-  component.forceUpdate();
+  // update layout direction
+  I18nManager.forceRTL(isRTL);
+  // set i18n-js config
+  i18n.translations = { [languageTag]: translationGetters[lang]() };
+  i18n.locale = languageTag;
 };
-// const setI18nConfig = () => {
-//   // fallback if no available language fits
-//   const fallback = { languageTag: "en", isRTL: false };
-
-//   const { languageTag, isRTL } =
-//     RNLocalize.findBestAvailableLanguage(Object.keys(translationGetters)) ||
-//     fallback;
-
-//   // clear translation cache
-//   translate.cache.clear();
-//   // update layout direction
-//   I18nManager.forceRTL(isRTL);
-//   // set i18n-js config
-//   i18n.translations = { [languageTag]: translationGetters[languageTag]() };
-//   i18n.locale = languageTag;
-// };
 
 export default class App extends Component {
   constructor(props) {
     super(props)
-    // setI18nConfig();
-
+    setI18nConfig('en');
     this.state = {
-      choosenIndex: 0
+      choosenIndex: 0,
+      lang: ''
     }
   }
 
 
   componentDidMount() {
-    // RNLocalize.addEventListener("change", this.handleLocalizationChange);
+    RNLocalize.addEventListener("change", this.handleLocalizationChange);
   }
 
   componentWillUnmount() {
-    // RNLocalize.removeEventListener("change", this.handleLocalizationChange);
+    RNLocalize.removeEventListener("change", this.handleLocalizationChange);
   }
 
-  // handleLocalizationChange = () => {
-  //   setI18nConfig();
-  //   this.forceUpdate();
-  // };
+  handleLocalizationChange(lang, itemPosition) {
+    this.setState({ lang: lang })
+    setI18nConfig(lang);
+    this.forceUpdate();
+  };
 
-  onChangeLang(itemValue, itemPosition) {
-    switchLanguage(itemValue, this);
-  }
   render() {
     return (
       <View style={{ flex: 1, alignContent: 'center', justifyContent: "center", alignItems: "center" }}>
@@ -80,13 +72,13 @@ export default class App extends Component {
           color: '#344953',
           justifyContent: 'center',
         }}
-          selectedValue={this.state.language}
-          onValueChange={(itemValue, itemPosition) => this.onChangeLang(itemValue, itemPosition)}>
+          selectedValue={this.state.lang}
+          onValueChange={(itemValue, itemPosition) => this.handleLocalizationChange(itemValue, itemPosition)}>
           <Picker.Item label="English" value="en" />
           <Picker.Item label="France" value="fr" />
           <Picker.Item label="Arabic" value="ar" />
         </Picker>
-        <Text> {strings("hello")} </Text>
+        <Text> {translate("hello")} </Text>
       </View>
     )
   }
