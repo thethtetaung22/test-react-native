@@ -4,22 +4,33 @@ import { Text, View, TouchableOpacity } from 'react-native'
 export default class Button extends Component {
 
     onPressHandler = () => {
-        console.log("Button clicked!")
+        const { onPress, url } = this.props
+        if (url) {
+            Linking.openURL(url)
+        }
+        onPress()    
     }
+
+    
 
     render() {
         const { buttonStyle, textStyle } = styles;
+        const { label, primary } = this.props;
+        const newButtonStyle = primary ? buttonStyle : [buttonStyle, { backgroundColor: '#f34541', borderBottomColor: '#a43532' }];
         return (
             <View>
                 <Text> Button Component </Text>
                 <TouchableOpacity onPress={this.onPressHandler} style={buttonStyle}>
                     <Text style={textStyle}>
-                        Button
+                        {label}
                     </Text>
                 </TouchableOpacity>
             </View>
         )
     }
+}
+Button.defaultProps = {
+    primary: true,
 }
 const styles = {
     textStyle: {
