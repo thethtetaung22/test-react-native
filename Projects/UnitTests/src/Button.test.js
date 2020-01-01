@@ -22,7 +22,7 @@ describe('Interaction', () => {
         const mockOnPress = jest.fn().mockName("onPress Mock Func");
 
         it('should call onPress', () => {
-            const component = shallow(<Button label="Test Label" onPress={mockOnPress}/>)
+            const component = shallow(<Button label="Test Label" onPress={mockOnPress}/>).toJSON()
             const instance = component.instance()
             instance.onPressHandler();
             // instance.onPressHandler();
