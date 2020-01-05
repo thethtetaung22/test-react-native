@@ -2,6 +2,7 @@
   package="com.testappforios">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
       android:name=".MainApplication"
@@ -30,6 +31,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/example_widget_info"/>
         </receiver>
+        <service android:name=".BackgroundTask"/>
     </application>
 
 </manifest>
