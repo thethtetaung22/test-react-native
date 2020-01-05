@@ -3,39 +3,19 @@ package com.widgetstest;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
-import android.util.Log;
 import android.widget.RemoteViews;
-import android.content.SharedPreferences;
-import android.widget.Toast;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Implementation of App Widget functionality.
  */
-public class NewAppWidget extends AppWidgetProvider {
+public class testWidget extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-        try {
-            SharedPreferences sharedPref = context.getSharedPreferences("DATA", Context.MODE_PRIVATE);
-            String appString = sharedPref.getString("appData", "{\"text\":'no data'}");
-            JSONObject appData = new JSONObject(appString);
-
-            // Construct the RemoteViews object
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
-            views.setTextViewText(R.id.appwidget_text, appData.getString("text"));
-            // Instruct the widget manager to update the widget
-            appWidgetManager.updateAppWidget(appWidgetId, views);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
         CharSequence widgetText = context.getString(R.string.appwidget_text);
         // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.test_widget);
         views.setTextViewText(R.id.appwidget_text, widgetText);
 
         // Instruct the widget manager to update the widget
@@ -53,9 +33,6 @@ public class NewAppWidget extends AppWidgetProvider {
     @Override
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created
-        Log.d("Widget_Provider", "En onEnabled");
-
-        Toast.makeText(context, "Widget added to Home Screen.", Toast.LENGTH_LONG).show();
     }
 
     @Override
